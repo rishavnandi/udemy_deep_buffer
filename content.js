@@ -3,21 +3,21 @@
   const MAX_DEPTH = 12;
   const MAX_OBJECTS = 15_000;
 
-  let activeVideo = null;
-  let activeSource = "";
-  let activePlayer = null;
+  let active_video = null;
+  let active_source = "";
+  let active_player = null;
   let checks = 0;
-  const watchedVideos = new WeakSet();
+  const watched_videos = new WeakSet();
 
-  function findShakaPlayer(video) {
-    const fiberKey = Object.keys(video).find(
+  function find_shaka_player(video) {
+    const fiber_key = Object.keys(video).find(
       (key) =>
         key.startsWith("__reactFiber$") ||
         key.startsWith("__reactInternalInstance$"),
     );
-    if (!fiberKey) return null;
+    if (!fiber_key) return null;
 
-    const queue = [{ value: video[fiberKey], depth: 0 }];
+    const queue = [{ value: video[fiber_key], depth: 0 }];
     const seen = new WeakSet();
 
     for (let head = 0; head < queue.length && head < MAX_OBJECTS; head += 1) {
@@ -57,14 +57,14 @@
     return null;
   }
 
-  function applyBuffer(force = false) {
+  function apply_buffer(force = false) {
     const video = document.querySelector("video");
     if (!video) return;
 
     const source = video.currentSrc;
-    if (!force && video === activeVideo && source === activeSource && activePlayer) return;
+    if (!force && video === active_video && source === active_source && active_player) return;
 
-    const player = findShakaPlayer(video);
+    const player = find_shaka_player(video);
     if (!player) return;
 
     try {
@@ -75,16 +75,16 @@
       });
 
       const applied = player.getConfiguration().streaming.bufferingGoal;
-      activeVideo = video;
-      activeSource = source;
-      activePlayer = player;
+      active_video = video;
+      active_source = source;
+      active_player = player;
       document.documentElement.dataset.udemyDeepBuffer = String(applied);
       console.info(`[Udemy Deep Buffer] Forward buffer set to ${applied} seconds.`);
 
-      if (!watchedVideos.has(video)) {
-        watchedVideos.add(video);
+      if (!watched_videos.has(video)) {
+        watched_videos.add(video);
         video.addEventListener("emptied", () => {
-          if (activeVideo === video) activePlayer = null;
+          if (active_video === video) active_player = null;
         });
       }
     } catch (error) {
@@ -92,11 +92,11 @@
     }
   }
 
-  new MutationObserver(() => applyBuffer()).observe(document.documentElement, {
+  new MutationObserver(() => apply_buffer()).observe(document.documentElement, {
     childList: true,
     subtree: true,
   });
-  window.addEventListener("load", () => applyBuffer(), { once: true });
-  setInterval(() => applyBuffer((checks += 1) % 30 === 0), 1_000);
-  applyBuffer();
+  window.addEventListener("load", () => apply_buffer(), { once: true });
+  setInterval(() => apply_buffer((checks += 1) % 30 === 0), 1_000);
+  apply_buffer();
 })();

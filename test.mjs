@@ -3,14 +3,14 @@ import fs from "node:fs";
 import vm from "node:vm";
 
 const source = fs.readFileSync(new URL("./content.js", import.meta.url), "utf8");
-let configuredWith;
+let configured_with;
 
 const player = {
   configure(config) {
-    configuredWith = config;
+    configured_with = config;
   },
   getConfiguration() {
-    return { streaming: { bufferingGoal: configuredWith?.streaming.bufferingGoal ?? 18 } };
+    return { streaming: { bufferingGoal: configured_with?.streaming.bufferingGoal ?? 18 } };
   },
 };
 const video = {
@@ -18,11 +18,11 @@ const video = {
   addEventListener() {},
   __reactFiber$test: { child: { decoy: {}, memoizedState: { player } } },
 };
-const documentElement = { dataset: {} };
+const document_element = { dataset: {} };
 
 vm.runInNewContext(source, {
   console: { info() {}, warn() {} },
-  document: { documentElement, querySelector: () => video },
+  document: { documentElement: document_element, querySelector: () => video },
   MutationObserver: class {
     observe() {}
   },
@@ -30,7 +30,7 @@ vm.runInNewContext(source, {
   window: { addEventListener() {} },
 });
 
-assert.equal(configuredWith.streaming.bufferingGoal, 120);
-assert.equal(Object.hasOwn(configuredWith.streaming, "bufferBehind"), false);
-assert.equal(documentElement.dataset.udemyDeepBuffer, "120");
+assert.equal(configured_with.streaming.bufferingGoal, 120);
+assert.equal(Object.hasOwn(configured_with.streaming, "bufferBehind"), false);
+assert.equal(document_element.dataset.udemyDeepBuffer, "120");
 console.log("Udemy Deep Buffer self-check passed.");
