@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Udemy Deep Buffer",
+  "version": "0.1.0",
+  "description": "Keeps a larger rolling video buffer on Udemy for smoother seeking.",
+  "content_scripts": [
+    {
+      "matches": ["https://www.udemy.com/course/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "world": "MAIN"
+    }
+  ]
+}
