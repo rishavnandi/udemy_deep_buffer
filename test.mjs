@@ -18,7 +18,8 @@ const video = {
   addEventListener() {},
   __reactFiber$test: { child: { decoy: {}, memoizedState: { player } } },
 };
-const document_element = { dataset: {} };
+const document_element = {};
+const browser_window = { addEventListener() {} };
 
 vm.runInNewContext(source, {
   console: { info() {}, warn() {} },
@@ -27,10 +28,10 @@ vm.runInNewContext(source, {
     observe() {}
   },
   setInterval() {},
-  window: { addEventListener() {} },
+  window: browser_window,
 });
 
 assert.equal(configured_with.streaming.bufferingGoal, 120);
 assert.equal(Object.hasOwn(configured_with.streaming, "bufferBehind"), false);
-assert.equal(document_element.dataset.udemyDeepBuffer, "120");
+assert.equal(browser_window.__udemy_deep_buffer__, 120);
 console.log("Udemy Deep Buffer self-check passed.");

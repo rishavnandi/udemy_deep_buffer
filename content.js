@@ -78,7 +78,7 @@
       active_video = video;
       active_source = source;
       active_player = player;
-      document.documentElement.dataset.udemyDeepBuffer = String(applied);
+      window.__udemy_deep_buffer__ = applied;
       console.info(`[Udemy Deep Buffer] Forward buffer set to ${applied} seconds.`);
 
       if (!watched_videos.has(video)) {

@@ -17,10 +17,10 @@ Chrome keeps an unpacked extension installed across browser restarts. After edit
 On a Udemy course page, open DevTools and run:
 
 ```js
-document.documentElement.dataset.udemyDeepBuffer
+window.__udemy_deep_buffer__
 ```
 
-It should return `"120"`. The extension also writes a confirmation to the page console.
+It should return `120`. The extension also writes a confirmation to the page console.
 
 Run the dependency-free self-check with:
 
